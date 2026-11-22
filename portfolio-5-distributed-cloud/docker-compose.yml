@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  pg-primary:
+    image: bitnami/postgresql:16
+    container_name: coretrust-pg-primary
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRESQL_USERNAME=coretrust_admin
+      - POSTGRESQL_PASSWORD=StrongBankPass2026
+      - POSTGRESQL_DATABASE=coretrust_db
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=ReplPass2026
+    volumes:
+      - pg_primary_data:/bitnami/postgresql
+    networks:
+      - coretrust-net
+
+  pg-replica:
+    image: bitnami/postgresql:16
+    container_name: coretrust-pg-replica
+    ports:
+      - "5434:5432"
+    depends_on:
+      - pg-primary
+    environment:
+      - POSTGRESQL_USERNAME=coretrust_admin
+      - POSTGRESQL_PASSWORD=StrongBankPass2026
+      - POSTGRESQL_DATABASE=coretrust_db
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_MASTER_HOST=pg-primary
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=ReplPass2026
+    networks:
+      - coretrust-net
+
+volumes:
+  pg_primary_data:
+
+networks:
+  coretrust-net:
+    driver: bridge
