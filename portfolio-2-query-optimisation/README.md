@@ -17,10 +17,9 @@ To evaluate query planner behavior under realistic load, `generate_bulk_data.sql
 
 | Query Scenario | Plan Node (Before) | Execution Time (Before) | Plan Node (After) | Execution Time (After) | Speedup |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Scenario 1:** Account Statement | Parallel Seq Scan + Sort | *~38.4 ms* | Index Scan (`idx_tx_sender_status_created`) | *~0.18 ms* | **~213x faster** |
-| **Scenario 2:** Failed High-Value Audit | Parallel Seq Scan + Sort | *~31.2 ms* | Bitmap Index Scan (`idx_tx_failed_high_value`) | *~0.45 ms* | **~69x faster** |
+| **Scenario 1:** Account Statement | Parallel Seq Scan + Sort | *~118 ms* | Index Scan (`idx_tx_sender_status_created`) | *~104 ms* | **~11.86%** |
+| **Scenario 2:** Failed High-Value Audit | Parallel Seq Scan + Sort | *~107 ms* | Bitmap Index Scan (`idx_tx_failed_high_value`) | *~98 ms* | **~8.41%** |
 
-*(Note: Replace the italicized times above with your exact local `EXPLAIN ANALYZE` readings.)*
 
 ## 4. Key Takeaways
 1. **Buffer Reads Dropped Dramatically:** Shared buffer hits dropped from scanning thousands of 8KB heap pages down to reading fewer than 10 index/heap pages.
